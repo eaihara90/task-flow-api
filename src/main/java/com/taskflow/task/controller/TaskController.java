@@ -3,6 +3,7 @@ package com.taskflow.task.controller;
 import com.taskflow.task.dto.TaskCreateRequestDto;
 import com.taskflow.task.dto.TaskResponseDto;
 import com.taskflow.task.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponseDto> save(@RequestBody TaskCreateRequestDto task) {
+    public ResponseEntity<TaskResponseDto> save(@Valid @RequestBody TaskCreateRequestDto task) {
         TaskResponseDto response = taskService.save(task);
         return ResponseEntity.created(URI.create("/tasks/" + response.id().toString())).body(response);
     }

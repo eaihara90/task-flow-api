@@ -16,12 +16,14 @@ public class InMemoryRepository implements TaskRepository {
 
     @Override
     public List<Task> findAll() {
-        return this.tasks;
+        return List.copyOf(this.tasks);
     }
 
     @Override
     public Optional<Task> findById(Long id) {
-        return this.tasks.stream().filter(task -> Objects.equals(task.getId(), id)).findFirst();
+        return this.tasks.stream()
+                .filter(task -> Objects.equals(task.getId(), id))
+                .findFirst();
     }
 
     @Override

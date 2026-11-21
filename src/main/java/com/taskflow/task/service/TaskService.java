@@ -3,14 +3,13 @@ package com.taskflow.task.service;
 import com.taskflow.task.dto.TaskResponseDto;
 import com.taskflow.task.entity.Task;
 import com.taskflow.task.dto.TaskCreateRequestDto;
+import com.taskflow.task.exception.TaskNotFoundException;
 import com.taskflow.task.mapper.TaskMapper;
 import com.taskflow.task.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -25,13 +24,6 @@ public class TaskService {
     }
 
     public TaskResponseDto save(TaskCreateRequestDto task) {
-        if (task.title() == null || task.title().isBlank()) {
-            throw new IllegalArgumentException("title cannot be empty");
-        }
-        if (task.description() == null || task.description().isBlank()) {
-            throw new IllegalArgumentException("description cannot be empty");
-        }
-
         Task newTask = taskMapper.convertDtoToTask(task);
         Task response = taskRepository.save(newTask);
 
@@ -44,12 +36,10 @@ public class TaskService {
     }
 
     public TaskResponseDto findById(Long id) {
-        Optional<Task> foundTask = taskRepository.findById(id);
-
-        if (foundTask.isEmpty()) {
-            throw new IllegalArgumentException("Task with id " + id + " does not exist");
-        }
-
-        return taskMapper.convertToTaskResponseDto(foundTask.get());
+        Task foundTask = taskRepository.findById(id)
+                .orElseThrow(() ->
+                        new TaskNotFoundException(String.format("task with id %d not found", id))
+                );
+        return taskMapper.convertToTaskResponseDto(foundTask);
     }
 }
