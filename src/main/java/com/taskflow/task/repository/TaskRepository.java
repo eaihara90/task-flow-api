@@ -9,7 +9,6 @@ public interface TaskRepository {
     List<Task> findAll();
     Optional<Task> findById(Long id);
     Task save(Task task);
-    Optional<Task> update(Long id);
-    Optional<Task> updateStatus(Long id);
-    boolean deleteById(Long id);
+    Task update(Task task);
+    boolean deleteTask(Task task);
 }

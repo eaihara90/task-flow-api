@@ -1,6 +1,7 @@
 package com.taskflow.task.repository;
 
 import com.taskflow.task.entity.Task;
+import com.taskflow.task.exception.TaskNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Optional;
 @Repository
 public class InMemoryRepository implements TaskRepository {
 
-    private List<Task> tasks = new ArrayList<>();
+    private final List<Task> tasks = new ArrayList<>();
     private long id = 1;
 
     @Override
@@ -35,29 +36,22 @@ public class InMemoryRepository implements TaskRepository {
     }
 
     @Override
-    public Optional<Task> update(Long id) {
-        return this.tasks.stream().filter(t -> Objects.equals(t.getId(), id)).findFirst();
-    }
-
-    @Override
-    public Optional<Task> updateStatus(Long id) {
-        return this.tasks.stream().filter(t -> Objects.equals(t.getId(), id)).findFirst();
-    }
-
-    @Override
-    public boolean deleteById(Long id) {
-        var foundTask = this.tasks.stream()
-                .filter(t -> Objects.equals(t.getId(), id))
-                .findFirst();
-
-        if (foundTask.isEmpty()) {
-            return false;
+    public Task update(Task task) {
+        for (int i = 0; i < tasks.size(); i++) {
+            if (Objects.equals
+                    (tasks.get(i).getId(),
+                            task.getId())
+            ) {
+                tasks.set(i, task);
+                return task;
+            }
         }
 
-        this.tasks.remove(foundTask.get());
+        throw new TaskNotFoundException(String.format("task with id %d not found", task.getId()));
+    }
 
-        return true;
-//        var newList = this.tasks.stream().filter(t -> !Objects.equals(t.getId(), id));
-//        this.tasks = new ArrayList<>(newList.toList());
+    @Override
+    public boolean deleteTask(Task task) {
+        return tasks.removeIf(t -> Objects.equals(t.getId(), task.getId()));
     }
 }
