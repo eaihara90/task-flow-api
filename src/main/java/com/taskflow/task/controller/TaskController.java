@@ -2,6 +2,8 @@ package com.taskflow.task.controller;
 
 import com.taskflow.task.dto.TaskCreateRequestDto;
 import com.taskflow.task.dto.TaskResponseDto;
+import com.taskflow.task.dto.TaskStatusRequestDto;
+import com.taskflow.task.dto.TaskUpdateRequestDto;
 import com.taskflow.task.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +41,23 @@ public class TaskController {
 
         TaskResponseDto response = taskService.findById(id);
         return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponseDto> update(@PathVariable Long id, @Valid @RequestBody TaskUpdateRequestDto task) {
+        TaskResponseDto response = taskService.update(id, task);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<TaskResponseDto> updateStatus(@PathVariable Long id, @Valid @RequestBody TaskStatusRequestDto task) {
+        TaskResponseDto response = taskService.updateStatus(id, task);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        taskService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

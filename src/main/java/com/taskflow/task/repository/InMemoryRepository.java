@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public class InMemoryRepository implements TaskRepository {
 
-    private final List<Task> tasks = new ArrayList<>();
+    private List<Task> tasks = new ArrayList<>();
     private long id = 1;
 
     @Override
@@ -32,5 +32,32 @@ public class InMemoryRepository implements TaskRepository {
         tasks.add(task);
         this.id++;
         return task;
+    }
+
+    @Override
+    public Optional<Task> update(Long id) {
+        return this.tasks.stream().filter(t -> Objects.equals(t.getId(), id)).findFirst();
+    }
+
+    @Override
+    public Optional<Task> updateStatus(Long id) {
+        return this.tasks.stream().filter(t -> Objects.equals(t.getId(), id)).findFirst();
+    }
+
+    @Override
+    public boolean deleteById(Long id) {
+        var foundTask = this.tasks.stream()
+                .filter(t -> Objects.equals(t.getId(), id))
+                .findFirst();
+
+        if (foundTask.isEmpty()) {
+            return false;
+        }
+
+        this.tasks.remove(foundTask.get());
+
+        return true;
+//        var newList = this.tasks.stream().filter(t -> !Objects.equals(t.getId(), id));
+//        this.tasks = new ArrayList<>(newList.toList());
     }
 }
