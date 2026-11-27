@@ -46,4 +46,17 @@ public class GlobalExceptionHandler {
                 .status(statusCode)
                 .body(response);
     }
+
+    @ExceptionHandler(InvalidTaskStatusTransitionException.class)
+    public ResponseEntity<ApiErrorResponseDto> handleInvalidTaskStatusTransitionException(InvalidTaskStatusTransitionException e) {
+        var statusCode = HttpStatus.CONFLICT.value();
+        var response = new ApiErrorResponseDto(
+                statusCode,
+                e.getMessage(),
+                new Date(),
+                null
+        );
+
+        return ResponseEntity.status(statusCode).body(response);
+    }
 }

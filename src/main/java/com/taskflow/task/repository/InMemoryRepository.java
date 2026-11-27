@@ -1,6 +1,7 @@
 package com.taskflow.task.repository;
 
 import com.taskflow.task.entity.Task;
+import com.taskflow.task.exception.TaskNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -32,5 +33,25 @@ public class InMemoryRepository implements TaskRepository {
         tasks.add(task);
         this.id++;
         return task;
+    }
+
+    @Override
+    public Task update(Task task) {
+        for (int i = 0; i < tasks.size(); i++) {
+            if (Objects.equals
+                    (tasks.get(i).getId(),
+                            task.getId())
+            ) {
+                tasks.set(i, task);
+                return task;
+            }
+        }
+
+        throw new TaskNotFoundException(String.format("task with id %d not found", task.getId()));
+    }
+
+    @Override
+    public boolean deleteTask(Task task) {
+        return tasks.removeIf(t -> Objects.equals(t.getId(), task.getId()));
     }
 }
